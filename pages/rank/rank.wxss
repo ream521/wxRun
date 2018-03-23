@@ -1,0 +1,231 @@
+/* pages/rank/rank.wxss */
+.userinfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url("http://hygs1.web.mai022.com/wxapp/img/wxrunindex.jpg") no-repeat center;
+    background-size:750rpx;
+    height: 600rpx;
+    position: relative;
+    z-index: 99;
+}
+.c-left {
+    width: 50%;
+}
+.c-right {
+    width: 50%;
+}
+.wx-run {
+    margin-top:100rpx; 
+    font-size: 60rpx;
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+}
+.wx-rank {
+    text-align: center;
+    font-size: 40rpx;
+    color: #fff;
+}
+.circle{
+    width:180rpx;
+    height:180rpx;
+    border-radius: 180rpx;
+    padding: 8rpx;
+    background: #fff;
+    box-shadow: 0rpx 4rpx 4rpx #dfdfdf;
+    position: absolute;
+    bottom:92rpx;
+}
+.userinfo .tname{
+    font-size: 40rpx;
+    font-weight: 700;
+    position: absolute;
+    bottom:30rpx
+}
+.tabs{
+    background:#fff;
+    height:100rpx;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    font-size: 36rpx;
+    font-weight: 700;
+    border-radius: 30rpx 30rpx 0 0;
+}
+.tabs .tab-c{
+    width:50%;
+    text-align: center;
+    line-height: 100rpx;
+}
+.tabs .active{
+    color:#fa3232;
+}
+.tip {
+    width: 80rpx;
+    height: 10rpx;
+    background: #fa3232;
+    margin-left: 39%;
+}
+.avatar{
+    width:180rpx;
+    height:180rpx;
+    border-radius: 180rpx;
+}
+.canvas{
+    background: #fff;
+    width:100%;
+    margin: 20rpx 0;
+}
+
+.title{
+    margin: 20rpx;
+    background: #dff0d8;
+    border-radius: 30rpx;
+    height:160rpx;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+}
+.row{
+    height:120rpx;
+    border-bottom:dashed 2rpx #ddd;
+}
+.content{
+    border-radius:0 0 30rpx 30rpx;
+    background: #fff;
+    margin:0 30rpx 30rpx;
+    overflow:hidden;
+}
+.content-top{
+    border-bottom:1px solid #ddd;
+    border-radius:30rpx 30rpx 0 0;
+    margin-top:30rpx;margin-bottom:0;
+}
+.content .row:nth-child(1){
+    background:#d9edf7;
+}
+.content .row:nth-child(2){
+    background:#fcf8e3;
+}
+.content .row:nth-child(3){
+    background:#dff0d8;
+}
+.content .row:nth-last-child(1){
+    border-bottom:none;
+}
+.img{
+    width:80rpx;
+    height:80rpx;
+    border-radius: 80rpx;
+    margin-left:20rpx; 
+    margin-right:20rpx; 
+}
+.step{
+    width:22%;
+    text-align: right;
+    margin-right: 20rpx;
+    color:#44b549
+}
+.rank{
+    width:12%;
+    text-align: center;
+}
+.nickname{
+    width:45%;
+    margin-right: 20rpx;
+    overflow: hidden;
+    font-size: 30rpx;
+}
+.unit{
+    font-size: 24rpx;
+    color:#e15f63;
+}
+.team{
+    text-align: center;
+    margin: 20rpx auto;
+}
+.team .img{
+    width:160rpx;
+    height:160rpx;
+}
+.team .name{
+    font-size: 40rpx;
+    color:#e15f63;
+    font-weight: 700;
+}
+.title .img{
+    width: 110rpx;
+    height: 110rpx;
+}
+.createteam{
+    width:60%;
+    height:80rpx;
+    line-height: 80rpx;
+    border-radius: 80rpx;
+    text-align: center;
+    margin: 0 auto;
+    color:#fff;
+    font-size: 40rpx;
+    font-weight: 700;
+    background: linear-gradient(to right, #18bde8, #018cc8);
+}
+.modal-mask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    overflow: hidden;
+    z-index: 9999;
+    color: #fff;
+}
+
+.modal-dialog {
+    width: 100%;
+    position: fixed;
+    top: 20%;
+    left: 0;
+    z-index: 99999;
+    margin: auto;
+}
+
+.modal-close {
+    font-size: 80rpx;
+    font-weight: 700;
+    color: #fff;
+    margin-left: 78%;
+    line-height: 80rpx;
+}
+.bg-tip{
+    width:60%;
+    text-align: center;
+    border-radius: 20rpx;
+    background: #fff;
+    margin: 0 auto;
+    padding: 20rpx;
+}
+.form-input{
+    border-bottom:#ddd 2rpx solid;
+    width:60%;
+    height:100rpx;
+    text-align: center;
+    line-height: 100rpx;
+    margin: 30rpx auto;
+    padding: auto;
+    font-size:30rpx;
+    color:#000;
+}
+.bg-tip .row{
+    border:none;
+}
+.formtip{
+    font-size: 30rpx;
+    font-weight: 700;
+}
+.pretip{
+    position: relative;
+    top:80rpx;
+}

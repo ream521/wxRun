@@ -1,0 +1,181 @@
+<!--logs.wxml-->
+<view class="container">
+    <view hidden="{{step1}}" class="step1" style="background: url({{bg_img}}) center top no-repeat;background-size:750rpx;">
+        <view class="header">
+          <view class="h-title-h">
+            </view>
+            <view class="h-msg">
+                已有 {{count}} 人集齐“{{keywords}}”
+            </view>
+
+            <view class="giftres" wx:if="{{iscollect}}">
+
+                <!-- <image src="{{gift_bgimg}}" class="t-img h600"></image> -->
+                <view class="share" wx:if="{{gifttype}}">
+                    <!--实物  -->
+                </view>
+                <view class="share" style="{{isIphoneX ? 'left:14%;' :'left:18%;'}} " wx:else>
+                    <form class="form1" bindsubmit="formSubmit" >
+                        <view class="section h600" style='background:url({{gift_bgimg}}) center no-repeat;background-size:100%;' >
+                            <view style='height:360rpx;'></view>
+                            <radio-group class='group' id="shopcate" bindchange="radioChange">
+                                <radio value="1" >移动 </radio>
+                                <radio value="2" >联通 </radio>
+                                <radio value="3" >电信 </radio>
+                            </radio-group>
+                            <!-- <view class="section_title">请留下您的手机号，我们会在5个工作日内充值到账！</view> -->
+                            <input name="title" style='color:{{inputc}}' type='number' maxlength="11" bindchange="checkphone" class="form-input" placeholder="输入手机号" />  
+                           
+                        </view>
+
+                        <view class="ok">
+                            <button class="lijiduihuan" form-type="submit">立即兑换</button>
+                        </view>
+            
+                    </form>
+                </view>
+                
+            </view>
+            <view wx:else class='swiper-c'>
+            <swiper  indicator-dots="{{false}}" autoplay="{{false}}" current="{{current}}" bindchange='qiehuan' circular="{{true}}">
+
+                <block wx:for="{{all}}"  wx:for-index="id" wx:for-item="item" wx:key="key">
+                    <swiper-item class="t-bg" data-id="{{item.id}}">
+                        <image src="{{item.big_img}}" class="t-img" wx:if="{{item.num>0}}"></image>
+                        <image src="{{item.big_pic}}" class="t-img" wx:else></image>
+                        <view class="share">
+                            <button class="givef" style="background: linear-gradient(to right, {{givebtnl}}, {{givebtnr}});" wx:if="{{item.num>0}}" data-keyword="{{item.keyword}}" data-img="{{item.big_img}}" open-type='share' id="givef">送给好友</button>
+
+                            <button class="getf1" style="background: linear-gradient(to right, {{getbtnl}}, {{getbtnr}});"  wx:if="{{item.num==0}}" data-keyword="{{item.keyword}}" data-img="{{item.big_img}}" open-type='share' id="getf">向好友索取</button>
+                            
+                            <button class="getf" style="background: linear-gradient(to right, {{getbtnl}}, {{getbtnr}});"  wx:else data-keyword="{{item.keyword}}" data-img="{{item.big_img}}" open-type='share' id="getf">向好友索取</button>
+                        </view>
+                    </swiper-item>
+                </block>
+
+            </swiper>
+            </view>
+
+        </view>
+
+        <view class="content" wx:if="{{!iscollect}}">
+            <view class="everyone" wx:for="{{all}}" wx:for-index="id" wx:for-item="item" wx:key="key">
+
+                <rich-text wx:if="{{item.num>0}}" class="jiaobiao" style="background: {{smallbdc}};">x {{item.num}}</rich-text>
+
+                <view wx:if="{{item.num>0}}">
+
+                    <image class="ishave have" style="border:6rpx solid {{smallbdc}}" data-id="{{id}}" bindtap="show" wx:if="{{show == id}}"  src="{{item.small_img}}"></image>
+                    <image class="ishave" data-id="{{id}}" bindtap="show" wx:else src="{{item.small_img}}"></image>
+                
+                </view>
+                <view wx:else>
+                    <image class="ishave have" style="border:6rpx solid {{smallbdc}}" data-id="{{id}}" bindtap="show" wx:if="{{show == id}}" src="{{item.small_pic}}"></image>
+                    <image class="ishave" wx:else data-id="{{id}}" bindtap="show" wx:else src="{{item.small_pic}}"></image>
+                </view>
+
+                <!-- <image class="ishave {{show == id ? 'have':''}}" data-id="{{id}}" bindtap="show" wx:if="{{item.num>0}}"  src="{{item.small_img}}"></image>
+                <image class="ishave {{show == id ? 'have':''}}" data-id="{{id}}" bindtap="show" wx:else src="{{item.small_pic}}"></image>  -->
+
+            </view>
+        </view>
+
+        <view class="next" bindtap="nextStep">
+            <view class='nextstep'>》</view>
+        </view>
+    </view>
+      <view hidden="{{step2}}" class="step2">
+        <view class="tabs row">
+            <view class="tab-c {{step3 ? '':'active'}}" bindtap="step3">活动说明</view>
+            <view class="tab-c {{step4 ? '':'active'}}" bindtap="step4">互赠记录</view>
+            <view class="tab-c {{step5 ? '':'active'}}" bindtap="step5">获奖名单</view>
+        </view>
+        <view class="xian">
+            <view class="tip1" hidden="{{step3}}"></view>
+            <view class="tip2" hidden="{{step4}}"></view>
+            <view class="tip3" hidden="{{step5}}"></view>
+        </view>
+        <view hidden="{{step3}}" class="step3 fz30">
+            <view class="c-bgcl">
+                <view class="a-title row">
+
+                    <image class="a-img" src="{{time_img}}"></image>
+
+                    活动时间
+                </view>
+                <view class="a-body">
+                    {{actTime}}
+                </view>
+
+                <view class="a-title row">
+
+                    <image class="a-img" src="{{gift_img}}"></image>
+
+                    活动奖励
+                </view>
+                <view class="a-body">
+                    {{giftContent}}
+                </view>
+
+                <view class="a-title row">
+
+                    <image class="a-img" src="{{about_img}}"></image>
+
+                    活动及兑奖说明
+                </view>
+                <view class="a-body">
+                    {{actContent}}
+                </view>
+            </view>
+
+        </view>
+        <view hidden="{{step4}}" class="step4"> 
+
+             <view class="zanwushuju" wx:if="{{allLog == null}}">暂无数据</view>
+             <view class="c-bgcl" wx:else > 
+
+                <view class="gift-row row {{index > 0 ? 'xuxian' : ''}}" wx:for="{{allLog}}" wx:for-index="index" wx:for-item="item" wx:key="key">
+                    <image class="avatar" src="{{item.avatar}}"></image>
+                    <view class="nickname">{{item.nickname}}</view>
+                    <view class="gift-msg">{{item.title}}</view>
+
+                </view>
+ 
+             </view> 
+             
+
+        </view>
+        <view hidden="{{step5}}" class="step4">
+
+             <view class="zanwushuju" wx:if="{{allres == null}}">暂无数据</view>
+             <view class="c-bgcl" wx:else> 
+
+                <view class="gift-row row {{index > 0 ? 'xuxian' : ''}}" wx:for="{{allres}}" wx:for-index="index" wx:for-item="item" wx:key="key">
+                    <view class="xuhao">{{index+1}} </view><image class="avatar" src="{{item.avatar}}"></image>
+                    <view class="nickname">{{item.nickname}}</view>
+                    <view class="gift-msg ta-c">{{item.title}}</view>
+
+                </view>
+                
+             </view> 
+
+        </view>
+
+        <view class="next" bindtap="preStep">
+            <view class='prestep'>》</view>
+        </view>
+
+    </view>  
+</view>
+
+
+<view class="modal-mask" catchtouchmove="preventTouchMove" wx:if="{{mymodal}}"></view>
+
+<view class="modal-dialog" wx:if="{{mymodal}}">
+    <view class="modal-close" bindtap="close">×</view>
+    <view class="gift">
+        <view >您的工会账号尚未认证，请尽快认证，认证后<text class="g-red">中奖概率更高</text>呦！请关注公众号“津工e家”认证</view>
+        <image src="http://hygs1.web.mai022.com/attachment/qrcode_6.jpg" class="qrcode"></image>
+    </view>
+
+</view>
