@@ -740,12 +740,13 @@ on rw.id = rs.uid WHERE rw.uniacid=6 group by rs.uid ORDER BY today_step DESC ";
     }else if($cid == '4'){
         $team = getTeam($user['tm_id']);
 
-        $sql = "SELECT rt.id,rt.team_name as nickname,rt.team_img as avatar,SUM(rs.step)+SUM(rw.today_step) as today_step FROM ".tablename('run_wxrun')." rw 
-        right join ".tablename('run_step')." rs on rw.id = rs.uid 
-        join ".tablename('run_team')." rt on rw.tm_id = rt.id
-        WHERE rw.uniacid=6 AND rw.tm_id !=0 AND rs.tid !=0 group by rs.tid ORDER BY today_step DESC ";
+        $sql = "SELECT rw.tm_id,rt.id,rt.team_name as nickname,rt.team_img as avatar,SUM(rw.today_step) as today_step FROM ".tablename('run_wxrun')." rw JOIN ".tablename('run_team')." rt ON rw.tm_id = rt.id WHERE rw.uniacid=$uniacid AND rw.tm_id !=0 GROUP BY rw.tm_id ORDER BY today_step DESC ";
         $ranklist = pdo_fetchall($sql);
         foreach($ranklist as $k=>$v){
+            $ranklist[$k]['today_step'] =$v['today_step'] + pdo_fetchcolumn("SELECT SUM(step) FROM ".tablename('run_step')." WHERE tid=  {$v['tm_id']} AND tid != 0");
+        }
+        $ranklist = my_sort($ranklist,'today_step');
+        foreach ($ranklist as $k=>$v){
             if($v['id'] == $user['tm_id']){
                 $rank = $v;
                 $rank['rank'] = '第 '.($k+1)." 名";
@@ -755,23 +756,34 @@ on rw.id = rs.uid WHERE rw.uniacid=6 group by rs.uid ORDER BY today_step DESC ";
                 $data[] = $v;
             }
         }
-        if(empty($ranklist)){
-            $sql = "SELECT rt.id,rt.team_name as nickname,rt.team_img as avatar,SUM(rw.today_step) as today_step FROM ".tablename('run_wxrun')." rw JOIN ".tablename('run_team')." rt ON rw.tm_id = rt.id WHERE rw.uniacid=$uniacid AND rw.tm_id !=0 GROUP BY rw.tm_id ORDER BY today_step DESC ";
-            $ranklist = pdo_fetchall($sql);
-            foreach($ranklist as $k=>$v){
-                if($v['id'] == $user['tm_id']){
-                    $rank = $v;
-                    $rank['rank'] = '第 '.($k+1)." 名";
-                }
-                //显示前100名
-                if($k < 100){
-                    $data[] = $v;
-                }
-            }
+    }
+    if($cid == '1' || $cid == '3'){
+        //个人
+        $timepre7 = strtotime(date('Y-m-d')) - 7*24*3600;
+        $sql = "SELECT step,timestamp FROM ".tablename('run_step')." WHERE timestamp > $timepre7 AND uid = {$user['id']} order by timestamp ASC";
+        $charts = pdo_fetchall($sql);
+        foreach($charts as $v){
+            $chart['step'][] = $v['step'];
+            $chart['date'][] = date('md',$v['timestamp']);
         }
+        $chart['step'][] = $user['today_step'];
+        $chart['date'][] = '今';//date('d');
+    }else if($cid == '2' || $cid == '4'){
+        //团队
+        $sql = "SELECT startTime,endTime FROM ".tablename('run_rank')." WHERE status = 1 AND uniacid = $uniacid";
+        $act = pdo_fetch($sql);//活动时间
+        getTeam($user['tm_id']);
+        $sql = "SELECT timestamp,SUM(step) as step FROM ".tablename('run_step')." WHERE timestamp >= {$act['startTime']} AND timestamp <= {$act['endTime']} AND tid = {$user['tm_id']} group by timestamp order by timestamp ASC";
+        $charts = pdo_fetchall($sql);
+        foreach($charts as $v){
+            $chart['step'][] = $v['step'];
+            $chart['date'][] = date('md',$v['timestamp']);
+        }
+        $chart['step'][] = pdo_fetchcolumn("SELECT SUM(today_step) FROM ".tablename('run_wxrun')." WHERE tm_id = {$user['tm_id']}");
+        $chart['date'][] = '今';//date('d');
     }
 
-    die(json_encode(['code'=>'ok','msg'=>'获取成功','data'=>['ranklist'=>$data,'rank'=>$rank]]));
+    die(json_encode(['code'=>'ok','msg'=>'获取成功','data'=>['ranklist'=>$data,'rank'=>$rank,'charts'=>$chart]]));
 }
 //判断活动是否开启
 function isrank($uniacid){
@@ -901,4 +913,20 @@ function mkdirs($path) {
         mkdir($path);
     }
     return is_dir($path);
+}
+//二维数组排序
+function my_sort($arrays,$sort_key,$sort_order=SORT_DESC,$sort_type=SORT_NUMERIC){
+    if(is_array($arrays)){
+        foreach ($arrays as $array){
+            if(is_array($array)){
+                $key_arrays[] = $array[$sort_key];
+            }else{
+                return false;
+            }
+        }
+    }else{
+        return false;
+    }
+    array_multisort($key_arrays,$sort_order,$sort_type,$arrays);
+    return $arrays;
 }
