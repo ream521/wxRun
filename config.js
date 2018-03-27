@@ -3,7 +3,6 @@
  */
 
 // 此处主机域名
-// var host = 'https://grbcs.mai022.com';
 var host = 'https://hygs.web.mai022.com';
 var config = {
 

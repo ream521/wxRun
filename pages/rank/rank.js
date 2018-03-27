@@ -20,7 +20,7 @@ Page({
         teamimg:'',
         tmid:0,
         isdetail:false,
-        chartList:[1,2,3,4,5,6,7,8,9,10],
+        chartList:null,
     },
 
     /**
@@ -55,7 +55,7 @@ Page({
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady: function () {
-        this.runChart();
+        
     },
 
     /**
@@ -131,6 +131,7 @@ Page({
                     rankList: res.data.data.ranklist,
                     tmid: res.data.data.rank.id ? res.data.data.rank.id :0,
                     isDetail: false,
+                    chartList: res.data.data.charts,
                 });
                 if (res.data.code == 'no'){
                     wx.showToast({
@@ -139,6 +140,7 @@ Page({
                         duration: 2000
                     })
                 } 
+                that.runChart();
                 setTimeout(function () {
                     wx.hideLoading()
                 }, 1000)
@@ -330,7 +332,7 @@ Page({
     },
     //图表
     runChart:function(e){
-        var that = this;
+         var that = this;
         var windowWidth = 320;
         try {
             var res = wx.getSystemInfoSync();
@@ -342,17 +344,18 @@ Page({
         lineChart = new wxCharts({
             canvasId: 'lineCanvas',
             type: 'line',
-            categories: that.data.chartList,
-            animation: false,
+            categories: that.data.chartList.date,
+            animation: true,
             series: [{
                 name: '步数',
-                data: that.data.chartList ,
+                data: that.data.chartList.step ,
                 format: function (val, name) {
                     return val + '步';
                 }
             }],
             xAxis: {
-                disableGrid: false
+                disableGrid: false,
+                type: 'category'
             },
             yAxis: {
                 title: '步数（步）',
@@ -367,8 +370,11 @@ Page({
             dataPointShape: true,
             enableScroll: true,
             extra: {
+                column: {
+                    width: 10
+                },
                 lineStyle: 'curve'
-            }
+            },
         });
     },
     touchHandler: function (e) {

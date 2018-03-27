@@ -16,35 +16,7 @@ Page({
 
     onLoad: function (option) {
         var that = this;
-
-        // if (app.globalData.userInfo) {
-        //     //  console.log(app.globalData.userInfo)
-        //     this.setData({
-        //         userInfo: app.globalData.userInfo,
-        //         hasUserInfo: true
-        //     })
-        // } else if (this.data.canIUse) {
-        //     // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-        //     // 所以此处加入 callback 以防止这种情况
-        //     app.userInfoReadyCallback = res => {
-        //         this.setData({
-        //             userInfo: res.userInfo,
-        //             hasUserInfo: true
-        //         })
-        //     }
-        // } else {
-        //     // 在没有 open-type=getUserInfo 版本的兼容处理
-        //     wx.getUserInfo({
-        //         success: res => {
-        //             app.globalData.userInfo = res.userInfo
-        //             this.setData({
-        //                 userInfo: res.userInfo,
-        //                 hasUserInfo: true
-        //             })
-        //         }
-        //     })
-        // }
-
+        
         wx.setNavigationBarTitle({ title: '微信运动' })
         wx.getSystemInfo({
             success: function (res) {
@@ -74,7 +46,25 @@ Page({
        
         this.canvasArc();
         this.getFuZi();
+        this.setData({
+            wxrun: wx.getStorageSync('wx_step'),
+        })
 
+    },
+    //用户信息入库
+    insertUser: function () {
+        var that = this;
+        wx.request({
+            url: config.service.requestUrl,
+            data: { a: 'insertUser', openid: that.data.openId, avatar: that.data.avatarUrl, nickname: that.data.nickName },
+            success: function (res) {
+                if (res.data.code=='no'){
+                    that.insertUser(user);
+                }else{
+                    //console.log(res)
+                }
+            }
+        })
     },
     //关联索取和赠送
     linkGiftLog(option) {
@@ -118,7 +108,6 @@ Page({
             success(res) {
 
                 wx.request({
-                    //   url: "https://ghqp.mai022.com/wx/wxdecode.php",
                     url: config.service.decodeUrl,
                     data: {
                         encryptedData: res.encryptedData,
@@ -127,7 +116,7 @@ Page({
                     },
                     dataType: "json",
                     success: function (o) {
-                        
+                        //console.log(o)
                         if (wx.getStorageSync('platform') == 'devtools' || wx.getStorageSync('platform') == 'ios') {
                             var oo = o.data;//工具用
                             that.setData({
@@ -139,7 +128,7 @@ Page({
 
                         //获取当天的步数
                         wx.setStorageSync('wx_step', oo.stepInfoList[30].step);
-
+                        //console.log(oo)
                         that.setData({
                             wxrun: oo.stepInfoList[30].step
                         });
@@ -166,7 +155,6 @@ Page({
                             mymodal: true,
                             big_img: imgs[0]['img'],
                             yibiaopan: true,
-                            
                         })
                         imgs.shift();
                         wx.setStorageSync('fuzi', imgs)

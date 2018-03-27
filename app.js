@@ -2,7 +2,7 @@
 
 App({
     onLaunch: function () {
-
+        var that = this;
         // 登录
         wx.login({
             success: res => {
@@ -20,7 +20,7 @@ App({
                 }
             },
         })
-        // 获取用户信息
+        // 获取用户授权
         wx.getSetting({
             success: res => {
                 //console.log(res)
@@ -42,8 +42,7 @@ App({
                     })
                 }
             }
-        })
-        
+        })    
     },
     //获取用户信息
     getUserBaseInfo: function (data) {
@@ -55,9 +54,9 @@ App({
                 iv: data.iv,
                 sessionKey: wx.getStorageSync('sessionKey'),
             },
-            dataType: "json",
+            dataType:'json',
             success: function (o) {
-                
+                //console.log(o)
                 if (wx.getStorageSync('platform') == 'devtools' || wx.getStorageSync('platform') == 'ios') {
                     var oo = o.data;//工具用
                 } else {
@@ -69,14 +68,12 @@ App({
                 } else {
                     that.insertUser(oo);
                 }
-
             }
         })
     },
     //用户信息入库
     insertUser: function (user) {
         var that = this;
-        
         wx.request({
             url: 'https://hygs.web.mai022.com/wxapp/index.php',
             data: { a: 'insertUser', openid: user.openId, avatar: user.avatarUrl, nickname: user.nickName },

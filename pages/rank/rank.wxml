@@ -12,7 +12,9 @@
     </view>
 
     <!--图表  -->
-    <canvas canvas-id="lineCanvas" disable-scroll="true" class="canvas" bindtouchstart="touchHandler" bindtouchmove="moveHandler" bindtouchend="touchEndHandler"></canvas>
+    <view class="" wx:if="{{!isDetail && chartList !=null}}">
+        <canvas canvas-id="lineCanvas" disable-scroll="true" class="canvas" bindtouchstart="touchHandler" bindtouchmove="moveHandler" bindtouchend="touchEndHandler"></canvas>
+    </view>
 
     <view class="content content-top" wx:if="{{!isDetail}}">
         <view class="tabs row " style='background:#fff;' wx:if="{{!istm}}">
