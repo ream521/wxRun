@@ -5,11 +5,9 @@
 
 return $config=[
     // 微信小程序 AppID
-    //'appId' => 'wx8f6a46103460747b',//o2o
     'appId' => 'wx17a78eaf1dbe7419',//hygs
 
     // 微信小程序 AppSecret
-    //'appSecret' => '186c282f55b43ba0f9e3504b12e9cc15',//o2o
     'appSecret' => '36ec201deb181053e8d060d39ef33fd8',//hygs
 
     // 微信登录态有效期

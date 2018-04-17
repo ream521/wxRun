@@ -2,6 +2,7 @@
 const config = require('../../config.js')
 const wxCharts = require('../../utils/wxcharts.js');
 var lineChart = null;
+
 Page({
 
     /**
@@ -125,7 +126,7 @@ Page({
             url: config.service.requestUrl,
             data: { a: 'getRankList', cid: cid, openid:wx.getStorageSync('openid') },
             success: function (res) {
-                //console.log(res)
+                console.log(res)
                 that.setData({
                     rank: res.data.data.rank,
                     rankList: res.data.data.ranklist,
@@ -332,7 +333,7 @@ Page({
     },
     //图表
     runChart:function(e){
-         var that = this;
+        var that = this;
         var windowWidth = 320;
         try {
             var res = wx.getSystemInfoSync();
@@ -367,11 +368,11 @@ Page({
             width: windowWidth,
             height: 160,
             dataLabel: true,
-            dataPointShape: true,
+            dataPointShape: false,
             enableScroll: true,
             extra: {
                 column: {
-                    width: 10
+                    width: 0
                 },
                 lineStyle: 'curve'
             },

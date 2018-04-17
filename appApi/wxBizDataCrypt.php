@@ -42,4 +42,4 @@ class WXBizDataCrypt
         return ErrorCode::$OK;
     }
 }
-?>
+

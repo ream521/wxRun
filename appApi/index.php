@@ -317,7 +317,11 @@ function getUid($uniacid){
     $openid=$_REQUEST['openid'];
 
     $user=getUserByOpenid($uniacid,$openid);
-    echo json_encode($user);die;
+    if($user){
+        die(json_encode(['code'=>'ok','msg'=>'success','data'=>$user]));
+    }else{
+        die(json_encode(['code'=>'no','msg'=>'用户不存在']));
+    }
 }
 //获取当前用户获取的字数
 function getUserFuzi(){
@@ -424,9 +428,9 @@ function insertUser($uniacid){
     $data['openid']=$_REQUEST['openid'];
 
     $user=getUserByOpenid($uniacid,$data['openid']);
+    $data['nickname']=base64_encode($_REQUEST['nickname']);
+    $data['avatar']=$_REQUEST['avatar'];
     if(empty($user)){
-        $data['nickname']=base64_encode($_REQUEST['nickname']);
-        $data['avatar']=$_REQUEST['avatar'];
         $data['uniacid']=$uniacid;
         $data['addTime']=time();
         $res=pdo_insert('run_wxrun',$data);
@@ -436,7 +440,12 @@ function insertUser($uniacid){
             echo json_encode(['code'=>'no','msg'=>'用户入库失败']);die;
         }
     }else{
-        echo json_encode(['code'=>'ok','msg'=>'用户已存在']);die;
+        $res=pdo_update('run_wxrun',$data,['openid'=>$data['openid'],'uniacid'=>$uniacid]);
+        if($res){
+            echo json_encode(['code'=>'ok','msg'=>'用户信息更新成功']);die;
+        }else{
+            echo json_encode(['code'=>'ok','msg'=>'用户信息更新失败']);die;
+        }
     }
 }
 //获取该公众号下的用户信息
@@ -543,7 +552,11 @@ function getOpenidByAuth(){
         $sql="UPDATE ".tablename('run_wxrun')." SET wxuid='$uid' WHERE openid='$smallopenid'";
 
         $res=pdo_query($sql);
-        //var_dump($res);die;
+        if($res){
+            $res = 'ok';
+        }else{
+            $res = 'no';
+        }
         include IA_ROOT."/wxapp/themes/wechat.html";
     }
 }
@@ -752,12 +765,14 @@ on rw.id = rs.uid WHERE rw.uniacid=6 group by rs.uid ORDER BY today_step DESC ";
                 $rank['rank'] = '第 '.($k+1)." 名";
             }
             //显示前100名
-            if($k < 100){
+            if($k < 20){
                 $data[] = $v;
             }
         }
     }
-    if($cid == '1' || $cid == '3'){
+    $sql = "SELECT startTime,endTime FROM ".tablename('run_rank')." WHERE status = 1 AND uniacid = $uniacid";
+    $act = pdo_fetch($sql);//活动时间
+    if($cid == '1'){
         //个人
         $timepre7 = strtotime(date('Y-m-d')) - 7*24*3600;
         $sql = "SELECT step,timestamp FROM ".tablename('run_step')." WHERE timestamp > $timepre7 AND uid = {$user['id']} order by timestamp ASC";
@@ -768,10 +783,19 @@ on rw.id = rs.uid WHERE rw.uniacid=6 group by rs.uid ORDER BY today_step DESC ";
         }
         $chart['step'][] = $user['today_step'];
         $chart['date'][] = '今';//date('d');
+    }else if($cid == '3'){
+        //个人本期
+        $timepre7 = strtotime(date('Y-m-d')) - 7*24*3600;
+        $sql = "SELECT step,timestamp FROM ".tablename('run_step')." WHERE timestamp>= {$act['startTime']} AND timestamp <= {$act['endTime']} AND uid = {$user['id']} order by timestamp ASC";
+        $charts = pdo_fetchall($sql);
+        foreach($charts as $v){
+            $chart['step'][] = $v['step'];
+            $chart['date'][] = date('md',$v['timestamp']);
+        }
+        $chart['step'][] = $user['today_step'];
+        $chart['date'][] = '今';//date('d');
     }else if($cid == '2' || $cid == '4'){
         //团队
-        $sql = "SELECT startTime,endTime FROM ".tablename('run_rank')." WHERE status = 1 AND uniacid = $uniacid";
-        $act = pdo_fetch($sql);//活动时间
         getTeam($user['tm_id']);
         $sql = "SELECT timestamp,SUM(step) as step FROM ".tablename('run_step')." WHERE timestamp >= {$act['startTime']} AND timestamp <= {$act['endTime']} AND tid = {$user['tm_id']} group by timestamp order by timestamp ASC";
         $charts = pdo_fetchall($sql);

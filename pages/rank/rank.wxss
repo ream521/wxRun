@@ -36,12 +36,17 @@
     box-shadow: 0rpx 4rpx 4rpx #dfdfdf;
     position: absolute;
     bottom:92rpx;
+    left:285rpx;
 }
 .userinfo .tname{
     font-size: 40rpx;
     font-weight: 700;
     position: absolute;
-    bottom:30rpx
+    bottom:30rpx;
+    width:600rpx;
+    left:75rpx;
+    overflow: hidden;
+    text-align: center;
 }
 .tabs{
     background:#fff;

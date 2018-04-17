@@ -13,7 +13,7 @@
 
     <!--图表  -->
     <view class="" wx:if="{{!isDetail && chartList !=null}}">
-        <canvas canvas-id="lineCanvas" disable-scroll="true" class="canvas" bindtouchstart="touchHandler" bindtouchmove="moveHandler" bindtouchend="touchEndHandler"></canvas>
+         <canvas canvas-id="lineCanvas" disable-scroll="true" class="canvas" bindtouchstart="touchHandler" bindtouchmove="moveHandler" bindtouchend="touchEndHandler"></canvas>
     </view>
 
     <view class="content content-top" wx:if="{{!isDetail}}">

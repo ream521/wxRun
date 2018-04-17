@@ -11,7 +11,6 @@
       <button wx:if="{{wxrun >= 100000}}" class="btn-cjb " bindtap="giveStep">捐步</button>
       <button wx:else class="btn-jb ">捐步</button>
     </view>
-
     <view class="wx-msg">满5000步可捐步</view>
 
     <view class="content">

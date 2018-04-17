@@ -3,22 +3,14 @@
 App({
     onLaunch: function () {
         var that = this;
-        // 登录
-        wx.login({
-            success: res => {
-                // 发送 res.code 到后台换取 openId, sessionKey, unionId
-                if (res.code) {
-                    wx.request({
-                        url: "https://hygs.web.mai022.com/wxapp/sessionKey.php?code=" + res.code,
-                        dataType: "json",
-                        success: function (o) {
-                            //console.log(o)
-                            wx.setStorageSync('sessionKey', o.data.sessionKey);
-                            wx.setStorageSync('openid', o.data.openid);
-                        }
-                    })
-                }
+        wx.checkSession({
+            success: function () {
+                that.login();//session_key 未过期，并且在本生命周期一直有效
             },
+            fail: function () {
+                // session_key 已经失效，需要重新执行登录流程
+                that.login(); //重新登录
+            }
         })
         // 获取用户授权
         wx.getSetting({
@@ -36,7 +28,7 @@ App({
                                 this.userInfoReadyCallback(res)
                             }
 
-                            this.getUserBaseInfo(res);
+                            //this.getUserBaseInfo(res);
 
                         }
                     })
@@ -44,48 +36,69 @@ App({
             }
         })    
     },
-    //获取用户信息
-    getUserBaseInfo: function (data) {
-        var that = this;
-        wx.request({
-            url: "https://hygs.web.mai022.com/wxapp/wxdecode.php",
-            data: {
-                encryptedData: data.encryptedData,
-                iv: data.iv,
-                sessionKey: wx.getStorageSync('sessionKey'),
+    //登陆
+    login:function(){
+        // 登录
+        wx.login({
+            success: res => {
+                // 发送 res.code 到后台换取 openId, sessionKey, unionId
+                if (res.code) {
+                    wx.request({
+                        url: "https://hygs.web.mai022.com/wxapp/sessionKey.php?code=" + res.code,
+                        dataType: "json",
+                        success: function (o) {
+                            //console.log(o, res.code)
+                            wx.setStorageSync('sessionKey', o.data.sessionKey);
+                            wx.setStorageSync('openid', o.data.openid);
+                        }
+                    })
+                }
             },
-            dataType:'json',
-            success: function (o) {
-                //console.log(o)
-                if (wx.getStorageSync('platform') == 'devtools' || wx.getStorageSync('platform') == 'ios') {
-                    var oo = o.data;//工具用
-                } else {
-                    var oo = JSON.parse(o.data.trim());//线上用
-                }
-                //console.log(oo)
-                if (oo == '') {
-                    that.getUserBaseInfo(data)
-                } else {
-                    that.insertUser(oo);
-                }
-            }
         })
     },
-    //用户信息入库
-    insertUser: function (user) {
-        var that = this;
-        wx.request({
-            url: 'https://hygs.web.mai022.com/wxapp/index.php',
-            data: { a: 'insertUser', openid: user.openId, avatar: user.avatarUrl, nickname: user.nickName },
-            success: function (res) {
-                if (res.data.code=='no'){
-                    that.insertUser(user);
-                }else{
-                    //console.log(res)
-                }
-            }
-        })
-    },
+    //获取用户信息
+    // getUserBaseInfo: function (data) {
+    //     var that = this;
+    //     wx.request({
+    //         url: "https://hygs.web.mai022.com/wxapp/wxdecode.php",
+    //         data: {
+    //             encryptedData: data.encryptedData,
+    //             iv: data.iv,
+    //             sessionKey: wx.getStorageSync('sessionKey'),
+    //             openid: wx.getStorageSync('openid')
+    //         },
+    //         dataType:'json',
+    //         success: function (o) {
+    //             //console.log(o)
+    //             if (wx.getStorageSync('platform') == 'devtools' || wx.getStorageSync('platform') == 'ios') {
+    //                 var oo = o.data;//工具用
+    //             } else {
+    //                 var oo = JSON.parse(o.data.trim());//线上用
+    //             }
+    //             //console.log(oo)
+    //             if (oo == '') {
+    //                 that.getUserBaseInfo(data)
+    //             } else {
+    //                 that.insertUser(oo);
+    //             }
+    //         }
+    //     })
+    // },
+    // //用户信息入库
+    // insertUser: function (user) {
+    //     var that = this;
+    //     wx.request({
+    //         url: 'https://hygs.web.mai022.com/wxapp/index.php',
+    //         data: { a: 'insertUser', openid: user.openId, avatar: user.avatarUrl, nickname: user.nickName },
+    //         success: function (res) {
+    //             if (res.data.code=='no'){
+    //                 that.insertUser(user);
+    //             }else{
+    //                 //console.log(res)
+    //             }
+    //         }
+    //     })
+    // },
     globalData: {
         userInfo: null,
     }
